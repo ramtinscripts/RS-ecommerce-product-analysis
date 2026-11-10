@@ -1,0 +1,14 @@
+# Raw datasets
+*.csv
+
+# SQL Server database and backup files
+*.mdf
+*.ndf
+*.ldf
+*.bak
+
+# Temporary and local files
+.vs/
+~$*
+Thumbs.db
+.DS_Store
