@@ -64,35 +64,6 @@ GROUP BY
 HAVING COUNT(*) > 1
 ORDER BY order_id;
 
--- Show order IDs that have more than one different version.
--- نمایش شناسه‌هایی که بیش از یک نسخه متفاوت دارند.
-WITH order_versions AS (
-    SELECT
-        order_id,
-        customer_id,
-        order_date,
-        status,
-        payment_method,
-        discount_code,
-        shipping_fee
-    FROM dbo.orders
-    GROUP BY
-        order_id,
-        customer_id,
-        order_date,
-        status,
-        payment_method,
-        discount_code,
-        shipping_fee
-)
-SELECT
-    order_id,
-    COUNT(*) AS different_versions
-FROM order_versions
-GROUP BY order_id
-HAVING COUNT(*) > 1
-ORDER BY order_id;
-
 -- =============================================================================
 -- 3. Missing Prices | قیمت‌های خالی
 -- =============================================================================
