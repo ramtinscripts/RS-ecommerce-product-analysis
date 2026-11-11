@@ -105,27 +105,21 @@ ORDER BY customer_count DESC;
 -- =============================================================================
 SELECT
     c.acquisition_channel,
-    COUNT(DISTINCT CASE WHEN o.status = 'completed' THEN c.customer_id END)
-        AS purchasing_customers,
-    COUNT(DISTINCT CASE WHEN o.status = 'completed' THEN o.order_id END)
-        AS completed_orders,
-    ROUND(SUM(CASE WHEN o.status = 'completed' THEN i.net_revenue ELSE 0 END), 2)
-        AS completed_net_revenue,
-    ROUND(SUM(CASE WHEN o.status = 'completed'
-                   THEN i.estimated_gross_profit ELSE 0 END), 2)
+    COUNT(DISTINCT c.customer_id) AS purchasing_customers,
+    COUNT(DISTINCT o.order_id) AS completed_orders,
+    ROUND(SUM(i.net_revenue), 2) AS completed_net_revenue,
+    ROUND(SUM(i.estimated_gross_profit), 2)
         AS estimated_gross_profit,
     ROUND(
-        SUM(CASE WHEN o.status = 'completed' THEN i.net_revenue ELSE 0 END)
-        / NULLIF(
-            COUNT(DISTINCT CASE WHEN o.status = 'completed' THEN o.order_id END),
-            0
-        ), 2
+        SUM(i.net_revenue)
+        / NULLIF(COUNT(DISTINCT o.order_id), 0), 2
     ) AS average_order_value
 FROM dbo.customers AS c
-LEFT JOIN dbo.vw_orders_clean AS o
+JOIN dbo.vw_orders_clean AS o
     ON o.customer_id = c.customer_id
 LEFT JOIN dbo.vw_order_items_enriched AS i
     ON i.order_id = o.order_id
+WHERE o.status = 'completed'
 GROUP BY c.acquisition_channel
 ORDER BY completed_net_revenue DESC;
 
